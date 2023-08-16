@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const User = require("../model/User.js");
 const { UserRoleEnum, UserStatusEnum } = require("../constants/Enum.js");
+const { parseQuery } = require("./utils");
 
 const UserController = {
     // Add a user to database
@@ -56,7 +57,9 @@ const UserController = {
 
     // Get details from query
     getDetails: async (req, res, next) => {
-        if (req.body.email || walletAccount) {
+        const query = await parseQuery(req.query);
+
+        if (query.email || query.walletAccount) {
             next({
                 invalidFields: true,
                 message: "Querying user details by email or MetaMask address is prohibited."
@@ -65,7 +68,7 @@ const UserController = {
         }
 
         try {
-            const details = await User.find(req.body).select("userName createdDate role status -_id");
+            const details = await User.find(query).select("userName createdDate role status -_id");
             res.status(200).json({
                 success: true,
                 accountDetails: details
@@ -81,7 +84,9 @@ const UserController = {
     },
 
     getUserNameFromId: async (req, res, next) => {
-        if (!req.body.id) {
+        const query = await parseQuery(req.query);
+
+        if (!query.id) {
             next({
                 invalidFields: true,
                 message: "Missing ID"
@@ -89,7 +94,7 @@ const UserController = {
         }
 
         try {
-            const userName = await User.findOne({_id: req.body.id}).select("userName");
+            const userName = await User.findOne({_id: query.id}).select("userName");
             res.status(200).json({
                 success: true,
                 userName: userName

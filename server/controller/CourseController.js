@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const Course = require("../model/Course");
 const userController = require("./UserController");
+const { query } = require("express");
+const { parseQuery } = require("./utils");
 
 const CourseController = {
     addCourse: async (req, res, next) => {
@@ -38,7 +40,10 @@ const CourseController = {
 
     getDetails: async (req, res, next) => {
         try {
-            const courseDetails = await Course.find(req.body);
+            const query = await parseQuery(req.query);
+            const courseDetails = await Course.find(query);
+            console.log(query);
+
             res.status(200).json({
                 success: true,
                 courseDetails: courseDetails

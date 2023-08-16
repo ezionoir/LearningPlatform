@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Question = require("../model/Question");
 const DifficultyEnum = require("../constants/Enum");
+const { parseQuery } = require("./utils");
 
 const QuestionController = {
     addQuestion: async (req, res, next) => {
@@ -59,7 +60,9 @@ const QuestionController = {
     },
 
     getQuestionsByDifficulty: async (req, res, next) => {
-        if (!req.body.courseId || !req.body.difficulty) {
+        const query = await parseQuery(req.query);
+
+        if (!query.courseId || !query.difficulty) {
             next({
                 invalidFields: true,
                 message: "Missing difficulty."
@@ -69,8 +72,8 @@ const QuestionController = {
 
         try {
             const questions = await Question.find({
-                courseId: req.body.courseId,
-                difficulty: req.body.difficulty
+                courseId: query.courseId,
+                difficulty: query.difficulty
             }).select("courseId content.question content.options difficulty");
             res.status(200).json({
                 success: true,

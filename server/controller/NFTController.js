@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const NFT = require("../model/NFT");
 const Course = require("../model/Course");
 const User = require("../model/User");
+const { parseQuery } = require("./utils");
 
 const NFTController = {
     addNFT: async (req, res, next) => {
