@@ -37,7 +37,7 @@ const QuestionController = {
             content: {
                 question: req.body.question,
                 options: req.body.options,
-                answer: req.body.answer
+                answer: req.body.answer.split(".")[0]
             },
             difficulty: req.body.difficulty
         });
